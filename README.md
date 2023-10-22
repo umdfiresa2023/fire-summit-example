@@ -17,24 +17,24 @@ We obtained our outcome variable from
 adjacent to the Chesapeake Bay is recorded each day.
 
 ``` r
-library("htmltools")
 library("tidyverse")
+library("simplermarkdown")
 
 #open file and select important parameters
 out<-read.csv("WaterQualityFIPS.csv") %>%
-  select(FIPS, SampleDate, Parameter, MeasureValue, Unit)
+  select(FIPS, SampleDate, Parameter, MeasureValue, Unit) 
 
-#display the top 6 rows of outcome variable
-print(head(out))
+md_table(head(out))
 ```
 
-       FIPS SampleDate Parameter MeasureValue Unit
-    1 11001  9/29/2016        TN        1.562 MG/L
-    2 11001  7/27/2016        TN        0.939 MG/L
-    3 11001  7/29/2016        TN        1.437 MG/L
-    4 11001  8/16/2016        TN        1.326 MG/L
-    5 11001  8/24/2016        TN        0.870 MG/L
-    6 11001   9/8/2016        TN        1.140 MG/L
+    |FIPS |SampleDate|Parameter|MeasureValue|Unit|
+    |-----|----------|---------|------------|----|
+    |11001|9/29/2016 |TN       |1.562       |MG/L|
+    |11001|7/27/2016 |TN       |0.939       |MG/L|
+    |11001|7/29/2016 |TN       |1.437       |MG/L|
+    |11001|8/16/2016 |TN       |1.326       |MG/L|
+    |11001|8/24/2016 |TN       |0.870       |MG/L|
+    |11001|9/8/2016  |TN       |1.140       |MG/L|
 
 Control Variable
 
@@ -102,20 +102,20 @@ radius around three factories before and after their openings.
 Before<-df2 %>%
   filter(PrePost=="Before") %>%
   group_by(ID) %>%
-  summarize(MeanBefore = mean(NO2), SDBefore = sd(NO2))
+  summarize(MeanBefore = mean(NO2)/10e14, SDBefore = sd(NO2)/10e14)
 
 After<-df2 %>%
   filter(PrePost=="After") %>%
   group_by(ID) %>%
-  summarize(MeanAfter = mean(NO2), SDAfter = sd(NO2))
+  summarize(MeanAfter = mean(NO2)/10e14, SDAfter = sd(NO2)/10e14)
 
-summ<-merge(Before, After, by="ID")
+summ<-merge(Before, After, by="ID") 
 
-#print summary table with 2 decimal points
-print(summ, digits=2)
+md_table(summ, digits=2)
 ```
 
-      ID MeanBefore SDBefore MeanAfter SDAfter
-    1  1    2.4e+15  1.9e+15   2.1e+15 2.0e+15
-    2  2    2.3e+15  9.2e+14   2.1e+15 8.8e+14
-    3  3    1.7e+15  1.0e+15   1.8e+15 1.1e+15
+    |ID|MeanBefore|SDBefore |MeanAfter|SDAfter  |
+    |--|----------|---------|---------|---------|
+    |1 |2.446468  |1.9467513|2.093651 |2.0200790|
+    |2 |2.337873  |0.9223341|2.088327 |0.8778855|
+    |3 |1.690165  |1.0241428|1.768923 |1.0620468|

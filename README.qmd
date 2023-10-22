@@ -20,15 +20,14 @@ We obtained our outcome variable from <https://datahub.chesapeakebay.net/> where
 #| warning: false
 #| message: false
 
-library("htmltools")
 library("tidyverse")
+library("simplermarkdown")
 
 #open file and select important parameters
 out<-read.csv("WaterQualityFIPS.csv") %>%
-  select(FIPS, SampleDate, Parameter, MeasureValue, Unit)
+  select(FIPS, SampleDate, Parameter, MeasureValue, Unit) 
 
-#display the top 6 rows of outcome variable
-print(head(out))
+md_table(head(out))
 ```
 
 Control Variable
@@ -90,15 +89,14 @@ Below is the average Total Column Tropospheric NO2 levels within a 10 km radius 
 Before<-df2 %>%
   filter(PrePost=="Before") %>%
   group_by(ID) %>%
-  summarize(MeanBefore = mean(NO2), SDBefore = sd(NO2))
+  summarize(MeanBefore = mean(NO2)/10e14, SDBefore = sd(NO2)/10e14)
 
 After<-df2 %>%
   filter(PrePost=="After") %>%
   group_by(ID) %>%
-  summarize(MeanAfter = mean(NO2), SDAfter = sd(NO2))
+  summarize(MeanAfter = mean(NO2)/10e14, SDAfter = sd(NO2)/10e14)
 
-summ<-merge(Before, After, by="ID")
+summ<-merge(Before, After, by="ID") 
 
-#print summary table with 2 decimal points
-print(summ, digits=2)
+md_table(summ, digits=2)
 ```

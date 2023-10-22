@@ -1,20 +1,26 @@
-# Team Name's FIRE Summit Presentation
+# Team Micro-Emissions FIRE Summit Presentation
 
-*Team Members' Names*
+*Thanicha Ruangmas*
 
 ## Research Question
 
-Write research question here
+How does emissions from battery recycling plants impact water pollution in the Chesapeake Bay?
 
 ## Background
 
-Why is the research question important to society?
+![Image Source: Chesapeake Bay Foundation](infographic.jpg){width="500"}
 
-How will this research build on existing findings?
+This research has not been conducted before by anyone.
 
 ## Data Wrangling
 
-Explain how you obtain data of the outcome, treatment, and control variables. Show a map if you have made one.
+We obtained our outcome variable from <https://datahub.chesapeakebay.net/> where water quality at each county adjacent to the Chesapeake Bay is recorded each day.
+
+```{r}
+out<-read.csv("WaterQualityFIPS.csv")
+```
+
+`{knitr::kable(out)}`
 
 You can display your codes without making it run by adding **#\| eval: false** at the top of the chunk.
 

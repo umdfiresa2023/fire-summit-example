@@ -1,30 +1,102 @@
 ---
-title: "Team Name's FIRE Summit Presentation"
-author: "Team Members"
+title: "Team Micro-Emissions FIRE Summit Presentation"
 format: gfm
 editor: visual
 ---
 
 ## Research Question
 
-Write research question here
+How does emissions from battery recycling plants impact water pollution in the Chesapeake Bay?
+
+![Image Source: Chesapeake Bay Foundation](infographic.jpg){width="500"}
 
 ## Data Wrangling
 
-Explain how you obtain data of the outcome, treatment, and control variables. Show a map if you have made one.
+Outcome Variable
 
-You can display your codes without making it run by adding **#\| eval: false** at the top of the chunk.
+We obtained our outcome variable from <https://datahub.chesapeakebay.net/> where water quality at each county adjacent to the Chesapeake Bay is recorded each day.
 
-You can also suppress warnings by adding **#\| warning: false**.
+```{r}
+#| warning: false
+#| message: false
+
+library("tidyverse")
+library("simplermarkdown")
+
+#open file and select important parameters
+out<-read.csv("WaterQualityFIPS.csv") %>%
+  select(FIPS, SampleDate, Parameter, MeasureValue, Unit) 
+
+md_table(head(out))
+```
+
+Control Variable
+
+To take into account precipitation and stormwater runoff, we used NASA Landsat data which provide monthly averages for every 0.1 longitude and 0.1 latitude grids.
+
+Average evapotranspiration levels from January 2010 is shown below.
 
 ```{r}
 #| warning: false
 
-library("tidyverse")
 library("terra")
-library("simplermarkdown")
+
+cmd<-vect("Shapefiles/tl_2020_24_county10.shp")
+cva<-vect("Shapefiles/tl_2020_51_county10.shp")
+
+r<-rast("201001.nc4")
+rp<-project(r[[1]], crs(cmd))
+
+plot(rp)
+plot(cmd, add=TRUE)
+plot(cva, add=TRUE)
+
 ```
+
+We then find the average evapotranspirtation, precipitation, and stormwater runoff for each county and each month.
 
 ## Preliminary Results
 
-If your team has created a data frame, please summarize the data in the form of a table and a graph in this section.
+After combining all the data together, here is a summary of our outcome variable (Total Column Tropospheric NO2) before and after the opening of factories.
+
+```{r}
+df<-read.csv("nasa_no2.csv")
+
+open1<-as.Date("20220101", format='%Y%m%d')
+open2<-as.Date("20220501", format='%Y%m%d')
+open3<-as.Date("20221001", format='%Y%m%d')
+
+df2<-df %>%
+  filter(!is.na(NO2)) %>%
+  filter(ID<=3) %>%
+  mutate(date=paste0(substr(Filename,6,9), substr(Filename, 11,14))) %>%
+  mutate(date=as.Date(date, format='%Y%m%d')) %>%
+  mutate(PrePost=ifelse(ID==1 & date<open1, "Before", "After")) %>%
+  mutate(PrePost=ifelse(ID==2 & date<open2, "Before", PrePost)) %>%
+  mutate(PrePost=ifelse(ID==3 & date<open3, "Before", PrePost))
+
+ggplot(data=df2, aes(x=date, y=NO2, color=PrePost, shape=factor(ID)))+
+  geom_point()+
+  theme_bw()+
+  xlab("Year")+
+  ylab("Total Column Troposheric NO2")+
+  labs(shape = "Factory ID", colour = "Opening Status")
+```
+
+Below is the average Total Column Tropospheric NO2 levels within a 10 km radius around three factories before and after their openings.
+
+```{r}
+Before<-df2 %>%
+  filter(PrePost=="Before") %>%
+  group_by(ID) %>%
+  summarize(MeanBefore = mean(NO2)/10e14, SDBefore = sd(NO2)/10e14)
+
+After<-df2 %>%
+  filter(PrePost=="After") %>%
+  group_by(ID) %>%
+  summarize(MeanAfter = mean(NO2)/10e14, SDAfter = sd(NO2)/10e14)
+
+summ<-merge(Before, After, by="ID") 
+
+md_table(summ, digits=2)
+```

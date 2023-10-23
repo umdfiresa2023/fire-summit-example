@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Team Micro-Emissions FIRE Summit Presentation
 
 ## Research Question
@@ -57,8 +56,6 @@ plot(cmd, add=TRUE)
 plot(cva, add=TRUE)
 ```
 
-![](README_files/figure-commonmark/unnamed-chunk-2-1.png)
-
 We then find the average evapotranspirtation, precipitation, and stormwater runoff for each county and each month.
 
 ## Preliminary Results
@@ -116,48 +113,3 @@ md_table(summ, digits=2)
 |2 |2.337873  |0.9223341|2.088327 |0.8778855|
 |3 |1.690165  |1.0241428|1.768923 |1.0620468|
 ```
-=======
-Team Name’s FIRE Summit Presentation
-================
-Team Members
-
-## Research Question
-
-Write research question here.
-
-(Optional) Insert an image if it helps motivate the research question.
-
-## Data Wrangling
-
-**Outcome variable**
-
-Write description, data source, and wrangling methodology. Show a map if
-you have made one.
-
-If you have loops, do not run the entire thing. Instead, run one sample
-loop or just display your codes without making it run by adding **\#\|
-eval: false** at the top of the chunk.
-
-You can also suppress warnings by adding **\#\| warning: false**.
-
-``` r
-library("tidyverse")
-library("terra")
-library("simplermarkdown")
-```
-
-**Treatment variable**
-
-Write description, data source, and wrangling methodology. Show a map if
-you have one.
-
-**Control variables**
-
-Write description, data source, and wrangling methodology. Show a map if
-you have one.
-
-## Preliminary Results
-
-Display a figure showing how the treatment variable impacted the outcome
-variable.
->>>>>>> baa66f7409208c54e9e731b14831f17d4c4c18fd

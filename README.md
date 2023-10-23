@@ -1,50 +1,75 @@
-# Team Micro-Emissions FIRE Summit Presentation
+# Team Name’s FIRE Summit Presentation
+Team Members
 
 ## Research Question
 
-How does emissions from battery recycling plants impact water pollution in the Chesapeake Bay?
+How does emissions from battery recycling plants impact water pollution
+in the Chesapeake Bay?
 
-```{=html}
-<img src="infographic.jpg" width="500"
-alt="Image Source: Chesapeake Bay Foundation" />
-```
+<img src="infographic.jpg" data-fig-align="center" width="500" />
+
 ## Data Wrangling
 
-Outcome Variable
+**Outcome variable**
 
-We obtained our outcome variable from <https://datahub.chesapeakebay.net/> where water quality at each county adjacent to the Chesapeake Bay is recorded each day.
+Our outcome variable is water quality from each county adjacent to the
+Chesapeake Bay. Specific water paratmers that we are interested in
+includes \_\_\_\_\_.
+
+This data is obtained from <https://datahub.chesapeakebay.net> which
+reports water quality from each county each day.
+
+We transformed daily observations from each county into monthly
+averages, as shown in the code below.
 
 ``` r
 library("tidyverse")
+library("terra")
 library("simplermarkdown")
 
-#open file and select important parameters
-out<-read.csv("WaterQualityFIPS.csv") %>%
-  select(FIPS, SampleDate, Parameter, MeasureValue, Unit) 
+#show a summary of data from the Chesapeake Bay data hub
 
-md_table(head(out))
+df<- read.csv("WaterQualityFIPS.csv") %>%
+  rename(fips=FIPS)
+
+fips<-read.csv("state_and_county_fips_master.csv")
+
+dfcounty<-merge(df, fips, by="fips", all.x=TRUE) %>%
+  mutate(SampleDate=as.Date(SampleDate, format='%m/%d/%Y')) %>%
+  mutate(Month=month(SampleDate), Year=year(SampleDate)) %>%
+  group_by(Parameter, Unit, fips, name, state, Month, Year) %>%
+  summarize(MeasureValue=mean(MeasureValue))
 ```
 
-```         
-|FIPS |SampleDate|Parameter|MeasureValue|Unit|
-|-----|----------|---------|------------|----|
-|11001|9/29/2016 |TN       |1.562       |MG/L|
-|11001|7/27/2016 |TN       |0.939       |MG/L|
-|11001|7/29/2016 |TN       |1.437       |MG/L|
-|11001|8/16/2016 |TN       |1.326       |MG/L|
-|11001|8/24/2016 |TN       |0.870       |MG/L|
-|11001|9/8/2016  |TN       |1.140       |MG/L|
+**Treatment variable**
+
+Our treatment variable is an indicator of whether there is a plastic bag
+ban or tax in each county. This dataset came from
+<https://www.bagtheban.com/in-your-state/>
+
+Explain the data wrangling methodology and edit the script below.
+
+``` r
+df3<- read.csv("Plastic Bag Legislation.csv") %>%
+  rename(name=Location) %>%
+  rename(state=State) %>%
+  mutate(state=ifelse(state=="Maryland", "MD", "VA"))
+
+df3county<- merge(df3, dfcounty, by="name", all.x=TRUE, all.y=TRUE)
+
+df3county<- df3county[,-12] %>%
+  rename(state = state.x)
 ```
 
-Control Variable
+**Control variables**
 
-To take into account precipitation and stormwater runoff, we used NASA Landsat data which provide monthly averages for every 0.1 longitude and 0.1 latitude grids.
+To take into account precipitation and stormwater runoff, we used NASA
+Landsat data which provide monthly averages for every 0.1 longitude and
+0.1 latitude grids.
 
 Average evapotranspiration levels from January 2010 is shown below.
 
 ``` r
-library("terra")
-
 cmd<-vect("Shapefiles/tl_2020_24_county10.shp")
 cva<-vect("Shapefiles/tl_2020_51_county10.shp")
 
@@ -56,11 +81,82 @@ plot(cmd, add=TRUE)
 plot(cva, add=TRUE)
 ```
 
-We then find the average evapotranspirtation, precipitation, and stormwater runoff for each county and each month.
+![](README_files/figure-commonmark/unnamed-chunk-3-1.png)
+
+We then find the average evapotranspirtation, precipitation, and
+stormwater runoff for each county and each month. An example code for
+January 2010 is shown below.
+
+``` r
+#for (i in 1:length(f)) {
+#  print(f[i])
+#r<-rast(paste0("G:/Shared drives/2023 FIRE-SA/FALL OUTPUT/Team Microplastic/NASA_output_data/",f[i]))
+
+r<-rast("201001.nc4")
+rp<-project(r, crs(cmd))
+
+Evap_tavg_va<-extract(rp[[1]],cva,fun="mean",na.rm=TRUE)
+Evap_tavg_md<-extract(rp[[1]],cmd,fun="mean",na.rm=TRUE)
+
+Qs_tavg_va<-extract(rp[[9]],cva,fun="mean",na.rm=TRUE)
+Qs_tavg_md<-extract(rp[[9]],cmd,fun="mean",na.rm=TRUE)
+
+Rainf_f_tavg_va<-extract(rp[[12]],cva,fun="mean",na.rm=TRUE)
+Rainf_f_tavg_md<-extract(rp[[12]],cmd,fun="mean",na.rm=TRUE)
+
+Tair_f_tavg_va<-extract(rp[[19]],cva,fun="mean",na.rm=TRUE)
+Tair_f_tavg_md<-extract(rp[[19]],cmd,fun="mean",na.rm=TRUE)
+
+va<-data.frame(NAME10=cva$NAME10, 
+               NAMELSAD10=cva$NAMELSAD10,
+               Evap_tavg=Evap_tavg_va$Evap_tavg,
+               Qs_tavg=Qs_tavg_va$Qs_tavg,
+               Rainf_f_tavg=Rainf_f_tavg_va$Rainf_f_tavg,
+               Tair_f_tavg=Tair_f_tavg_va$Tair_f_tavg)
+               #Tair_f_tavg=Tair_f_tavg_va$Tair_f_tavg,
+               #file=f[i])
+
+md<-data.frame(NAME10=cmd$NAME10, 
+               NAMELSAD10=cmd$NAMELSAD10,
+               Evap_tavg=Evap_tavg_md$Evap_tavg,
+               Qs_tavg=Qs_tavg_md$Qs_tavg,
+               Rainf_f_tavg=Rainf_f_tavg_md$Rainf_f_tavg,
+               Tair_f_tavg=Tair_f_tavg_md$Tair_f_tavg)
+               #Tair_f_tavg=Tair_f_tavg_va$Tair_f_tavg,
+               #file=f[i])
+
+#outva<-rbind(outva, va)
+#outmd<-rbind(outmd,md)
+#}
+```
+
+An example of control variables from January 2010 in Maryland is shown
+below.
+
+``` r
+head(md)
+```
+
+          NAME10        NAMELSAD10    Evap_tavg      Qs_tavg Rainf_f_tavg
+    1  Worcester  Worcester County 1.402706e-05 6.656126e-06 3.811770e-05
+    2    Harford    Harford County 1.438178e-05 3.877095e-06 3.511265e-05
+    3 Montgomery Montgomery County 1.093989e-05 2.293109e-06 2.710311e-05
+    4 Washington Washington County 1.659733e-05 5.653316e-06 3.779316e-05
+    5    Carroll    Carroll County 1.466791e-05 1.895020e-06 3.017357e-05
+    6 St. Mary's St. Mary's County 1.558496e-05 6.449214e-06 4.059291e-05
+      Tair_f_tavg
+    1    274.4209
+    2    272.2390
+    3    272.0965
+    4    270.0460
+    5    271.3427
+    6    273.5845
 
 ## Preliminary Results
 
-After combining all the data together, here is a summary of our outcome variable (Total Column Tropospheric NO2) before and after the opening of factories.
+After combining all the data together, here is a summary of our outcome
+variable (Total Column Tropospheric NO2) before and after the opening of
+factories.
 
 ``` r
 df<-read.csv("nasa_no2.csv")
@@ -86,30 +182,4 @@ ggplot(data=df2, aes(x=date, y=NO2, color=PrePost, shape=factor(ID)))+
   labs(shape = "Factory ID", colour = "Opening Status")
 ```
 
-![](README_files/figure-commonmark/unnamed-chunk-3-1.png)
-
-Below is the average Total Column Tropospheric NO2 levels within a 10 km radius around three factories before and after their openings.
-
-``` r
-Before<-df2 %>%
-  filter(PrePost=="Before") %>%
-  group_by(ID) %>%
-  summarize(MeanBefore = mean(NO2)/10e14, SDBefore = sd(NO2)/10e14)
-
-After<-df2 %>%
-  filter(PrePost=="After") %>%
-  group_by(ID) %>%
-  summarize(MeanAfter = mean(NO2)/10e14, SDAfter = sd(NO2)/10e14)
-
-summ<-merge(Before, After, by="ID") 
-
-md_table(summ, digits=2)
-```
-
-```         
-|ID|MeanBefore|SDBefore |MeanAfter|SDAfter  |
-|--|----------|---------|---------|---------|
-|1 |2.446468  |1.9467513|2.093651 |2.0200790|
-|2 |2.337873  |0.9223341|2.088327 |0.8778855|
-|3 |1.690165  |1.0241428|1.768923 |1.0620468|
-```
+![](README_files/figure-commonmark/unnamed-chunk-6-1.png)

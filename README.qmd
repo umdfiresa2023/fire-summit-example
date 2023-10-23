@@ -7,19 +7,19 @@ editor: visual
 
 ## Research Question
 
-Write research question here.
+How does emissions from battery recycling plants impact water pollution in the Chesapeake Bay?
 
-(Optional) Insert an image if it helps motivate the research question.
+![](infographic.jpg){fig-align="center" width="500"}
 
 ## Data Wrangling
 
 **Outcome variable**
 
-Write description, data source, and wrangling methodology. Show a map if you have made one.
+Our outcome variable is water quality from each county adjacent to the Chesapeake Bay. Specific water paratmers that we are interested in includes \_\_\_\_\_.
 
-If you have loops, do not run the entire thing. Instead, run one sample loop or just display your codes without making it run by adding **#\| eval: false** at the top of the chunk.
+This data is obtained from <https://datahub.chesapeakebay.net> which reports water quality from each county each day.
 
-You can also suppress warnings by adding **#\| warning: false**.
+We transformed daily observations from each county into monthly averages, as shown in the code below.
 
 ```{r}
 #| warning: false
@@ -27,16 +27,132 @@ You can also suppress warnings by adding **#\| warning: false**.
 library("tidyverse")
 library("terra")
 library("simplermarkdown")
+
+#show a summary of data from the Chesapeake Bay data hub
+
+df<- read.csv("WaterQualityFIPS.csv") %>%
+  rename(fips=FIPS)
+
+fips<-read.csv("state_and_county_fips_master.csv")
+
+dfcounty<-merge(df, fips, by="fips", all.x=TRUE) %>%
+  mutate(SampleDate=as.Date(SampleDate, format='%m/%d/%Y')) %>%
+  mutate(Month=month(SampleDate), Year=year(SampleDate)) %>%
+  group_by(Parameter, Unit, fips, name, state, Month, Year) %>%
+  summarize(MeasureValue=mean(MeasureValue))
 ```
 
 **Treatment variable**
 
-Write description, data source, and wrangling methodology. Show a map if you have one.
+Our treatment variable is an indicator of whether there is a plastic bag ban or tax in each county. This dataset came from <https://www.bagtheban.com/in-your-state/>
+
+Explain the data wrangling methodology and edit the script below.
+
+```{r}
+df3<- read.csv("Plastic Bag Legislation.csv") %>%
+  rename(name=Location) %>%
+  rename(state=State) %>%
+  mutate(state=ifelse(state=="Maryland", "MD", "VA"))
+
+df3county<- merge(df3, dfcounty, by="name", all.x=TRUE, all.y=TRUE)
+
+df3county<- df3county[,-12] %>%
+  rename(state = state.x)
+```
 
 **Control variables**
 
-Write description, data source, and wrangling methodology. Show a map if you have one.
+To take into account precipitation and stormwater runoff, we used NASA Landsat data which provide monthly averages for every 0.1 longitude and 0.1 latitude grids.
+
+Average evapotranspiration levels from January 2010 is shown below.
+
+```{r}
+cmd<-vect("Shapefiles/tl_2020_24_county10.shp")
+cva<-vect("Shapefiles/tl_2020_51_county10.shp")
+
+r<-rast("201001.nc4")
+rp<-project(r[[1]], crs(cmd))
+
+plot(rp)
+plot(cmd, add=TRUE)
+plot(cva, add=TRUE)
+```
+
+We then find the average evapotranspirtation, precipitation, and stormwater runoff for each county and each month. An example code for January 2010 is shown below.
+
+```{r}
+#for (i in 1:length(f)) {
+#  print(f[i])
+#r<-rast(paste0("G:/Shared drives/2023 FIRE-SA/FALL OUTPUT/Team Microplastic/NASA_output_data/",f[i]))
+
+r<-rast("201001.nc4")
+rp<-project(r, crs(cmd))
+
+Evap_tavg_va<-extract(rp[[1]],cva,fun="mean",na.rm=TRUE)
+Evap_tavg_md<-extract(rp[[1]],cmd,fun="mean",na.rm=TRUE)
+
+Qs_tavg_va<-extract(rp[[9]],cva,fun="mean",na.rm=TRUE)
+Qs_tavg_md<-extract(rp[[9]],cmd,fun="mean",na.rm=TRUE)
+
+Rainf_f_tavg_va<-extract(rp[[12]],cva,fun="mean",na.rm=TRUE)
+Rainf_f_tavg_md<-extract(rp[[12]],cmd,fun="mean",na.rm=TRUE)
+
+Tair_f_tavg_va<-extract(rp[[19]],cva,fun="mean",na.rm=TRUE)
+Tair_f_tavg_md<-extract(rp[[19]],cmd,fun="mean",na.rm=TRUE)
+
+va<-data.frame(NAME10=cva$NAME10, 
+               NAMELSAD10=cva$NAMELSAD10,
+               Evap_tavg=Evap_tavg_va$Evap_tavg,
+               Qs_tavg=Qs_tavg_va$Qs_tavg,
+               Rainf_f_tavg=Rainf_f_tavg_va$Rainf_f_tavg,
+               Tair_f_tavg=Tair_f_tavg_va$Tair_f_tavg)
+               #Tair_f_tavg=Tair_f_tavg_va$Tair_f_tavg,
+               #file=f[i])
+
+md<-data.frame(NAME10=cmd$NAME10, 
+               NAMELSAD10=cmd$NAMELSAD10,
+               Evap_tavg=Evap_tavg_md$Evap_tavg,
+               Qs_tavg=Qs_tavg_md$Qs_tavg,
+               Rainf_f_tavg=Rainf_f_tavg_md$Rainf_f_tavg,
+               Tair_f_tavg=Tair_f_tavg_md$Tair_f_tavg)
+               #Tair_f_tavg=Tair_f_tavg_va$Tair_f_tavg,
+               #file=f[i])
+
+#outva<-rbind(outva, va)
+#outmd<-rbind(outmd,md)
+#}
+```
+
+An example of control variables from January 2010 in Maryland is shown below.
+
+```{r}
+head(md)
+```
 
 ## Preliminary Results
 
-Display a figure showing how the treatment variable impacted the outcome variable.
+After combining all the data together, here is a summary of our outcome variable (Total Column Tropospheric NO2) before and after the opening of factories.
+
+```{r}
+df<-read.csv("nasa_no2.csv")
+
+open1<-as.Date("20220101", format='%Y%m%d')
+open2<-as.Date("20220501", format='%Y%m%d')
+open3<-as.Date("20221001", format='%Y%m%d')
+
+df2<-df %>%
+  filter(!is.na(NO2)) %>%
+  filter(ID<=3) %>%
+  mutate(date=paste0(substr(Filename,6,9), substr(Filename, 11,14))) %>%
+  mutate(date=as.Date(date, format='%Y%m%d')) %>%
+  mutate(PrePost=ifelse(ID==1 & date<open1, "Before", "After")) %>%
+  mutate(PrePost=ifelse(ID==2 & date<open2, "Before", PrePost)) %>%
+  mutate(PrePost=ifelse(ID==3 & date<open3, "Before", PrePost))
+
+ggplot(data=df2, aes(x=date, y=NO2, color=PrePost, shape=factor(ID)))+
+  geom_point()+
+  theme_bw()+
+  xlab("Year")+
+  ylab("Total Column Troposheric NO2")+
+  labs(shape = "Factory ID", colour = "Opening Status")
+```

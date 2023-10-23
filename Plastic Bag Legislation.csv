@@ -1,0 +1,103 @@
+Month,Year,Ban,Tax,Location,State,DataHubPresence,SurroundingTheBay
+October,2021,1,1,Baltimore City,Maryland,1,1
+July,2020,1,0,Westminster City,Maryland,0,0
+July,2020,0,1,Howard County,Maryland,1,0
+September,2017,1,0,Harford County,Maryland,1,1
+April,2017,1,0,Aberdeen City,Maryland,0,0
+December,2016,1,0,Takoma Park City,Maryland,0,0
+January,2012,0,1,Montgomery County,Maryland,1,0
+March,2011,1,0,Chestertown City,Maryland,0,0
+January,2023,0,1,Albemarle County,Virginia,1,0
+July,2022,0,1,Louden County,Virginia,1,0
+April,2022,0,1,Falls Church City,Virginia,0,0
+January,2022,0,1,Roanoke City,Virginia,0,0
+January,2022,0,1,Arlington County,Virginia,1,1
+January,2022,0,1,Alexandria City,Virginia,1,1
+January,2022,0,1,Fairfax County,Virginia,1,1
+January,2022,0,1,Fredericksburg City,Virginia,1,0
+N/A,N/A,0,0,Allegany County,Maryland,1,0
+N/A,N/A,0,0,Anne Arundel County,Maryland,1,1
+N/A,N/A,0,0,Baltimore County,Maryland,1,1
+N/A,N/A,0,0,Calvert County,Maryland,1,1
+N/A,N/A,0,0,Caroline County,Maryland,1,1
+N/A,N/A,0,0,Carroll County,Maryland,1,0
+N/A,N/A,0,0,Cecil County,Maryland,1,1
+N/A,N/A,0,0,Charles County,Maryland,1,1
+N/A,N/A,0,0,Dorchester County,Maryland,1,1
+N/A,N/A,0,0,Frederick County,Maryland,1,0
+N/A,N/A,0,0,Garrett County,Maryland,1,0
+N/A,N/A,0,0,Kent County,Maryland,1,1
+N/A,N/A,0,0,Prince Georges County,Maryland,1,0
+N/A,N/A,0,0,Queen Annes County,Maryland,1,1
+N/A,N/A,0,0,Saint Marys County,Maryland,1,1
+N/A,N/A,0,0,Somerset County,Maryland,1,1
+N/A,N/A,0,0,Talbot County,Maryland,1,1
+N/A,N/A,0,0,Washington County,Maryland,1,0
+N/A,N/A,0,0,Wicomico County,Maryland,1,1
+N/A,N/A,0,0,Worcester County,Maryland,1,1
+N/A,N/A,0,0,Accomack County,Virginia,1,1
+N/A,N/A,0,0,Amelia County,Virginia,1,0
+N/A,N/A,0,0,Amherst County,Virginia,1,0
+N/A,N/A,0,0,Augusta County,Virginia,1,0
+N/A,N/A,0,0,Bath County,Virginia,1,0
+N/A,N/A,0,0,Botetourt County,Virginia,1,0
+N/A,N/A,0,0,Buckingham County,Virginia,1,0
+N/A,N/A,0,0,Caroline County,Virginia,1,0
+N/A,N/A,0,0,Chesterfield County,Virginia,1,0
+N/A,N/A,0,0,Culpeper County,Virginia,1,0
+N/A,N/A,0,0,Cumberland County,Virginia,1,0
+N/A,N/A,0,0,Dinwiddie County,Virginia,1,0
+N/A,N/A,0,0,Essex County,Virginia,1,1
+N/A,N/A,0,0,Fauquier County,Virginia,1,0
+N/A,N/A,0,0,Fluvanna County,Virginia,1,0
+N/A,N/A,0,0,Gloucester County,Virginia,1,1
+N/A,N/A,0,0,Goochland County,Virginia,1,0
+N/A,N/A,0,0,Greene County,Virginia,1,0
+N/A,N/A,0,0,Hanover County,Virginia,1,0
+N/A,N/A,0,0,Henrico County,Virginia,1,0
+N/A,N/A,0,0,Isle of Wight County,Virginia,1,1
+N/A,N/A,0,0,James City County,Virginia,1,1
+N/A,N/A,0,0,King and Queen County,Virginia,1,0
+N/A,N/A,0,0,King George County,Virginia,1,1
+N/A,N/A,0,0,King William County,Virginia,1,0
+N/A,N/A,0,0,Lancaster County,Virginia,1,1
+N/A,N/A,0,0,Louisa County,Virginia,1,0
+N/A,N/A,0,0,Madison County,Virginia,1,0
+N/A,N/A,0,0,Mathews County,Virginia,1,1
+N/A,N/A,0,0,Middlesex County,Virginia,1,1
+N/A,N/A,0,0,Montgomery County,Virginia,1,0
+N/A,N/A,0,0,Nelson County,Virginia,1,0
+N/A,N/A,0,0,New Kent County,Virginia,1,0
+N/A,N/A,0,0,Northampton County,Virginia,1,1
+N/A,N/A,0,0,Northumberland County,Virginia,1,1
+N/A,N/A,0,0,Orange County,Virginia,1,0
+N/A,N/A,0,0,Powhatan County,Virginia,1,0
+N/A,N/A,0,0,Prince George County,Virginia,1,0
+N/A,N/A,0,0,Prince William County,Virginia,1,1
+N/A,N/A,0,0,Rappahannock County,Virginia,1,0
+N/A,N/A,0,0,Richmond County,Virginia,1,1
+N/A,N/A,0,0,Rockbridge County,Virginia,1,0
+N/A,N/A,0,0,Rockingham County,Virginia,1,0
+N/A,N/A,0,0,Shenandoah County,Virginia,1,0
+N/A,N/A,0,0,Spotsylvania County,Virginia,1,0
+N/A,N/A,0,0,Stafford County,Virginia,1,1
+N/A,N/A,0,0,Warren County,Virginia,1,0
+N/A,N/A,0,0,Westmoreland County,Virginia,1,0
+N/A,N/A,0,0,York County,Virginia,1,1
+N/A,N/A,0,0,Charlottesville City,Virginia,1,0
+N/A,N/A,0,0,Chesapeake City,Virginia,1,0
+N/A,N/A,0,0,Hampton City,Virginia,1,1
+N/A,N/A,0,0,Hopewell City,Virginia,1,0
+N/A,N/A,0,0,Lexington City,Virginia,1,0
+N/A,N/A,0,0,Manassas City,Virginia,1,0
+N/A,N/A,0,0,Manassas Park City,Virginia,1,0
+N/A,N/A,0,0,Newport News City,Virginia,1,1
+N/A,N/A,0,0,Norfolk City,Virginia,1,1
+N/A,N/A,0,0,Petersburg City,Virginia,1,0
+N/A,N/A,0,0,Poqouson Ciry,Virginia,1,1
+N/A,N/A,0,0,Portsmouth City,Virginia,1,1
+N/A,N/A,0,0,Richmond City,Virginia,1,1
+N/A,N/A,0,0,Suffolk City,Virginia,1,1
+N/A,N/A,0,0,Virginia Beach City,Virginia,1,1
+N/A,N/A,0,0,Waynesboro City,Virginia,1,0
+N/A,N/A,0,0,Williamsburg City,Virginia,1,0

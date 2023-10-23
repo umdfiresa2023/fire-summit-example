@@ -2,19 +2,17 @@
 
 ## Research Question
 
-How does emissions from battery recycling plants impact water pollution
-in the Chesapeake Bay?
+How does emissions from battery recycling plants impact water pollution in the Chesapeake Bay?
 
+```{=html}
 <img src="infographic.jpg" width="500"
 alt="Image Source: Chesapeake Bay Foundation" />
-
+```
 ## Data Wrangling
 
 Outcome Variable
 
-We obtained our outcome variable from
-<https://datahub.chesapeakebay.net/> where water quality at each county
-adjacent to the Chesapeake Bay is recorded each day.
+We obtained our outcome variable from <https://datahub.chesapeakebay.net/> where water quality at each county adjacent to the Chesapeake Bay is recorded each day.
 
 ``` r
 library("tidyverse")
@@ -27,20 +25,20 @@ out<-read.csv("WaterQualityFIPS.csv") %>%
 md_table(head(out))
 ```
 
-    |FIPS |SampleDate|Parameter|MeasureValue|Unit|
-    |-----|----------|---------|------------|----|
-    |11001|9/29/2016 |TN       |1.562       |MG/L|
-    |11001|7/27/2016 |TN       |0.939       |MG/L|
-    |11001|7/29/2016 |TN       |1.437       |MG/L|
-    |11001|8/16/2016 |TN       |1.326       |MG/L|
-    |11001|8/24/2016 |TN       |0.870       |MG/L|
-    |11001|9/8/2016  |TN       |1.140       |MG/L|
+```         
+|FIPS |SampleDate|Parameter|MeasureValue|Unit|
+|-----|----------|---------|------------|----|
+|11001|9/29/2016 |TN       |1.562       |MG/L|
+|11001|7/27/2016 |TN       |0.939       |MG/L|
+|11001|7/29/2016 |TN       |1.437       |MG/L|
+|11001|8/16/2016 |TN       |1.326       |MG/L|
+|11001|8/24/2016 |TN       |0.870       |MG/L|
+|11001|9/8/2016  |TN       |1.140       |MG/L|
+```
 
 Control Variable
 
-To take into account precipitation and stormwater runoff, we used NASA
-Landsat data which provide monthly averages for every 0.1 longitude and
-0.1 latitude grids.
+To take into account precipitation and stormwater runoff, we used NASA Landsat data which provide monthly averages for every 0.1 longitude and 0.1 latitude grids.
 
 Average evapotranspiration levels from January 2010 is shown below.
 
@@ -60,14 +58,11 @@ plot(cva, add=TRUE)
 
 ![](README_files/figure-commonmark/unnamed-chunk-2-1.png)
 
-We then find the average evapotranspirtation, precipitation, and
-stormwater runoff for each county and each month.
+We then find the average evapotranspirtation, precipitation, and stormwater runoff for each county and each month.
 
 ## Preliminary Results
 
-After combining all the data together, here is a summary of our outcome
-variable (Total Column Tropospheric NO2) before and after the opening of
-factories.
+After combining all the data together, here is a summary of our outcome variable (Total Column Tropospheric NO2) before and after the opening of factories.
 
 ``` r
 df<-read.csv("nasa_no2.csv")
@@ -95,8 +90,7 @@ ggplot(data=df2, aes(x=date, y=NO2, color=PrePost, shape=factor(ID)))+
 
 ![](README_files/figure-commonmark/unnamed-chunk-3-1.png)
 
-Below is the average Total Column Tropospheric NO2 levels within a 10 km
-radius around three factories before and after their openings.
+Below is the average Total Column Tropospheric NO2 levels within a 10 km radius around three factories before and after their openings.
 
 ``` r
 Before<-df2 %>%
@@ -114,8 +108,10 @@ summ<-merge(Before, After, by="ID")
 md_table(summ, digits=2)
 ```
 
-    |ID|MeanBefore|SDBefore |MeanAfter|SDAfter  |
-    |--|----------|---------|---------|---------|
-    |1 |2.446468  |1.9467513|2.093651 |2.0200790|
-    |2 |2.337873  |0.9223341|2.088327 |0.8778855|
-    |3 |1.690165  |1.0241428|1.768923 |1.0620468|
+```         
+|ID|MeanBefore|SDBefore |MeanAfter|SDAfter  |
+|--|----------|---------|---------|---------|
+|1 |2.446468  |1.9467513|2.093651 |2.0200790|
+|2 |2.337873  |0.9223341|2.088327 |0.8778855|
+|3 |1.690165  |1.0241428|1.768923 |1.0620468|
+```
